@@ -1,0 +1,3 @@
+JavaFX 11是Gluon的第一个长期支持的JavaFX版本。
+
+JavaFX11运行时可以作为平台特定SDK。
