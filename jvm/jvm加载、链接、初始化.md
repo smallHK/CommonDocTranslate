@@ -25,34 +25,46 @@ jvm为每个接口或类维护一个运行时常量池。该数据结构功能�
 
 - 对于类方法的符号引用从CONSTANT_Mehtodref_info结构中派生而来。该引用给定了方法的名称与描述符，以及该方法所属于的类的符号引用。
 
-- CONSTANT_InterfaceMethodref_info
+- 对于接口的方法的符号引用从CONSTANT_InterfaceMethodref_info结构中派生而来。该引用给定接口方法的名称与描述符，以及可以发现该方法的接口的符号引用。
 
-方法类型的符号引用从CONSTANT_MethodType_info。
+- 对于方法句柄的符号引用从CONSTANT_MethodHandle_info结构中派生而来。该引用给定了对于接口或类的字段的引用，或者对类方法的引用，或者对接口方法的引用，依赖于方法句柄的类型。
 
-动态计算常量的符号引用从CONSTANT_Dynamic_info中派生。
-计算常量值的方法句柄的符号引用。
-当方法句柄被调用时，作为静态参数使用的符号引用序列、静态常量序列
+- 对于方法类型的符号引用从CONSTANT_MethodType_info结构中派生而来。该引用给定了方法描述符。
+
+- 对于动态计算常量的符号引用从CONSTANT_Dynamic_info中派生。
+
+该引用给定：
+对于方法句柄的符号引用，该句柄被用于计算常量值。
+静态常量与符号引用序列，用作方法句柄被调用时的静态参数
 未限定名称与字段描述符
 
-动态计算调用位置的符号引用从CONSTANT_InvokeDynamic_info种派生。
+- 对于动态计算调用位置的符号引用从CONSTANT_InvokeDynamic_info结构中派生。
+
+该引用给定：
 对方法句柄的符号引用，该方法在invokedynamic指令期间调用，用于计算java.lang.invoke.CallSite实例。
-当方法句柄被调用时，作为静态参数使用的符号引用序列、静态常量序列
+当方法句柄被调用时，作为静态参数值使用的符号引用序列、静态常量序列
 未限定名称与方法描述符
 
-运行时常量池中的静态常量从constant_pool表中导出。
+运行时常量池中的静态常量也从constant_pool表中的实体派生。
+
 字符串常量为String实例的引用，从CONSTANT_String_info中派生。
 数字常量从CONSTANT_Integer_info、CONSTANT_Float_info、CONSTANT_Long_info、CONSTANT_Double_info派生。
 
-CONSTANT_NameAndType_info、CONSTANT_Module_info、CONSTANT_Package_info以及CONSTANT_Utf8_info只在构建运行时常量池时间接使用。
+constant_pool表中剩下的结构，CONSTANT_NameAndType_info、CONSTANT_Module_info、CONSTANT_Package_info以及基础结构CONSTANT_Utf8_info，只在构建运行时常量池时间接使用。运行时常量池中没有条目直接对应这些结构。
 
-静态常量池中的一些实体为可载入，可以压入栈中、可以称为启动方法的静态参数。
 
-可载入的项为：
+静态常量池中的一些实体为可载入的，这意味着：
+它们可以被ldc类指令压入栈中
+它们可以用作动态计算常量与动态计算调用点的启动方法的静态参数值。
+
+
+可载入的条目：
 对类与接口的符号引用
 对方法句柄的符号引用
 对方法类型的符号引用
 对动态计算常量的符号引用
 静态常量
+
 
 ## JVM启动
 
@@ -149,7 +161,7 @@ jvm不会根据布局的运行时模块间的互相读取检验类加载的彼�
 每个未命名模块可以读取每个运行时模块。
 每个未命名模块导出到每个运行时模块，每个运行时模块与自身关联。
 
-链接
+## 链接
 
 链接一个类，涉及验证准备类或接口，它的超类、超接口、元素类型（如果为一个数组类型）。
 链接涉及解析类或接口中的符号引用。
@@ -209,15 +221,22 @@ jvm实现可以选择懒惰链接策略，也可以选择积极链接策略。
 
 方法重写
 
-方法选择
-在invokevirtual、invokeinterface指令执行期间，将会根据过去被此指令解析或栈上对象的运行时类型选择方法。
+### 方法选择
+
+在invokevirtual、invokeinterface指令执行期间，方法将会根据位于栈上对象的运行时类型，以及被指令在过去解析的方法所选择。
+
 
 如果类包含实例方法的重写，使用此方法。
 如果类包含超类，在超类中找寻重写的方法。
 确定猜的最大确定超接口方法。
 
 
-jvm退出
+## 初始化
+
+## 绑定本地方法实现
+
+
+## jvm退出
 
 当一些线程调用Runtime或System的exit或Runtime的halt方法时，并且安全管理器允许执行exit与halt之后，jvm退出。
 

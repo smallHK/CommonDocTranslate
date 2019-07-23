@@ -153,7 +153,7 @@ name_index的值必须为constant_pool表中的合法索引值。该索引的条
 
 
 
-## CONSTANT_NameAndType
+### CONSTANT_NameAndType
 
 用于表示字段或方法
 CONSTANT_NameAndType_info {
@@ -189,7 +189,10 @@ tag为8
 index为对CONSTANT_Utf8_info的引用。
 
 
-## CONSTANT_Fieldref，CONSTANT_Methodref，CONSTANT_InterfaceMethodref
+### CONSTANT_Fieldref，CONSTANT_Methodref，CONSTANT_InterfaceMethodref
+
+字段、方法与接口方法使用相似的结构表示。
+
 CONSTANT_Fieldref_info {
     u1 tag;
     u2 class_index;
@@ -209,7 +212,10 @@ CONSTANT_InterfaceMethodref_info {
 }
 
 
-CONSTANT_MethodHandle_info表示一个方法句柄
+
+## CONSTANT_MethodHandle_info
+
+表示一个方法句柄
 CONSTANT_MethodHandle_info {
     u1 tag;
     u1 reference_kind;
