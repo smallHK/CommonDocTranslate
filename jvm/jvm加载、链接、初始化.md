@@ -21,8 +21,11 @@ jvm为每个接口或类维护一个运行时常量池。该数据结构功能�
 
 (派生的结果类似于Class.getName)
 
+- 对类或接口的字段的符号引用从CONSTANT_Fieldref_info派生而来。该种引用给定字段的名称与描述符，以及该字段所属于的类或接口的符号引用。
 
-CONSTANT_Fieldref_info、CONSTANT_Mehtodref_info、CONSTANT_InterfaceMethodref_info
+- 对于类方法的符号引用从CONSTANT_Mehtodref_info结构中派生而来。该引用给定了方法的名称与描述符，以及该方法所属于的类的符号引用。
+
+- CONSTANT_InterfaceMethodref_info
 
 方法类型的符号引用从CONSTANT_MethodType_info。
 
@@ -51,7 +54,7 @@ CONSTANT_NameAndType_info、CONSTANT_Module_info、CONSTANT_Package_info以及CO
 对动态计算常量的符号引用
 静态常量
 
-JVM启动
+## JVM启动
 
 jvm通过使用启动类加载器或用户自定义类加载器创建初始类或接口进行启动。
 jvm接着链接初始类或接口、实例化、调用main方法。

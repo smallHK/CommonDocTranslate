@@ -153,7 +153,9 @@ name_index的值必须为constant_pool表中的合法索引值。该索引的条
 
 
 
-CONSTANT_NameAndType用于表示字段或方法
+## CONSTANT_NameAndType
+
+用于表示字段或方法
 CONSTANT_NameAndType_info {
     u1 tag;
     u2 name_index;
