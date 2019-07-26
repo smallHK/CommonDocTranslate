@@ -103,14 +103,14 @@ attributes[]
 
 例如，java.lang.Thread在class文件中的CONSTANT_Utf8_info中，使用java/lang/Thread表示。
 
-
-
-方法、字段、本地变量以及形参都存储为非限定名。
-方法名不能包括尖括号。
-
-没有方法调用指令可以引用<client>方法，只有invokespecial可以引用<init>方法。
-
 ### 非限定名称
+
+方法、字段、本地变量以及形参都存储为非限定名。非限定名最少包括一个Unicode点，不能包括任何ASCII字符.;[/。
+
+除非特殊名称，<init>与<clinit>，方法名不能包括尖括号。
+
+字段名与接口方法名可以为<init>或<clinit>，没有方法调用指令可以引用<clinit>方法，只有invokespecial可以引用<init>方法。
+
 
 ### 模块名与包名
 

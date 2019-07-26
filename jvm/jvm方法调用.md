@@ -41,6 +41,16 @@ count操作数为不为零的无符号字节。
 ## invokespecial
 
 调用实例方法，直接调用实力初始化方法以及该类与其超类的方法。
+```
+invokespecial
+indexbyte1
+indexbyte2
+```
+invokespecial = 183(0xb7)
+
+indexbyte1与indexbyte2用于构建到当前类的运行时常量池的索引，值为(indexbyte1 << 8) | indexbyte2。该索引必须指向运行时常量池中指向方法或实例方法的符号引用。
+
+
 
 
 ## invokestatic
@@ -58,5 +68,3 @@ invokevirtual indexbyte1 indexbyte2
 ```
 
 无符号indexbyte1与indexbyte2用于构建当前类运行时常量池的索引，该索引的值为(indexbyte1 << 8) | indexbyte2。运行时常量池中位于该索引的实体必须为对方法的符号引用，该符号引用给出了方法的名称与描述符以及对方法被发现的类的符号引用。指定的方法已经被解析。
-
-
