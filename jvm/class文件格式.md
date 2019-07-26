@@ -2,16 +2,17 @@
 
 每个class文件包括单独类、接口或模块的定义。
 
-class文件由8位字节流构成。
+class文件由8位字节流构成。16位与32位通过分别读取两个或四个8位字节流构成。多字节数据项中，大的字节存储在前。u1、u2与u4分别表示无符号1、2或4字节。
+
+Java SE平台API中，class文件格式接口java.io.DataInput与java.io.DataOutput支持。例如，java.io.DataInput可以通过readUnsignedByte、readUnsignedShort与readInt读取u1、u2、u4。
+
+class文件中的项在字节流中连续存储，中间没有空格。
 
 由零个或多个可变大小的项组成的表，用于多个class文件结构。
 
-u1、u2、u3、u4类型表示无符号整数
-u1表示1byte的整数、u2为2个byte、u4为4个byte，数字表示整数的长度
-
-
 ## Class文件结构
 
+```
 ClassFile {
     u4             magic;
     u2             minor_version;
@@ -30,11 +31,12 @@ ClassFile {
     u2             attributes_count;
     attribute_info attributes[attributes_count];
 }
+```
 
-magic
-magic项标识class文件结构，值为0xCAFEBABE
+magic  
+magic项标识class文件，值为0xCAFEBABE
 
-minor_version、major_version
+minor_version、major_version  
 minor m与major M标识class文件版本，M.m
 
 constant_pool_count
@@ -91,12 +93,27 @@ attributes[]
 
 ## 名称
 
-出现在class文件结构中的类与接口的名称总是表示为二进制名称。总是表示为CONSTANT_Utf8_info结构。类与接口的名称通过CONSTANT_NameAndType_info结构引用。
+### 二进制类名与接口名
+
+出现在class文件结构中的类与接口的名称总是表示为二进制名称。类名与接口名以CONSTANT_Utf8_info结构表示。
+
+类与接口的名称通过CONSTANT_NameAndType_info结构引用，用于表示描述符的一部分，并且来自所有的CONSTANT_Class_info结构。
+
+由于历史原因，class文件结构中的二进制名称语法与JLS中的二进制名称语法不同。在内部形式，ASCII(/)通常用于分隔标识符。标识符自身必须为非限制名称。
+
+例如，java.lang.Thread在class文件中的CONSTANT_Utf8_info中，使用java/lang/Thread表示。
+
+
 
 方法、字段、本地变量以及形参都存储为非限定名。
 方法名不能包括尖括号。
 
 没有方法调用指令可以引用<client>方法，只有invokespecial可以引用<init>方法。
+
+### 非限定名称
+
+### 模块名与包名
+
 
 
 
