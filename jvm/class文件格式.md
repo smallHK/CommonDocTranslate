@@ -169,35 +169,12 @@ name_index的值必须为constant_pool表中的合法索引值。该索引的条
 
 
 
-
-### CONSTANT_NameAndType
-
-用于表示字段或方法
-CONSTANT_NameAndType_info {
-    u1 tag;
-    u2 name_index;
-    u2 descriptor_index;
-}
-
-
-CONSTANT_Utf8_info {
-    u1 tag;
-    u2 length;
-    u1 bytes[length];
-}
-
-
-()I，表方法示无参返回int类型值的描述
-()Ljava/lang/Object，表示方法返回Object类型值的描述
-copmareTo，表示方法的名称
-
-
-CONSTANT_Integer
+### CONSTANT_Integer
 - tag 3
 - byte u4
 
 
-CONSTANT_String_info
+### CONSTANT_String_info
 CONSTANT_String_info {
     u1 tag;
     u2 string_index;
@@ -229,8 +206,34 @@ CONSTANT_InterfaceMethodref_info {
 }
 
 
+### CONSTANT_NameAndType
 
-## CONSTANT_MethodHandle_info
+用于表示字段或方法
+CONSTANT_NameAndType_info {
+    u1 tag;
+    u2 name_index;
+    u2 descriptor_index;
+}
+
+
+### CONSTANT_Utf8_info
+
+用于表示字符串常量值。
+CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+
+字符串内容使用已修改的UTF-8进行编码。
+
+
+()I，表方法示无参返回int类型值的描述
+()Ljava/lang/Object，表示方法返回Object类型值的描述
+copmareTo，表示方法的名称
+
+
+### CONSTANT_MethodHandle_info
 
 表示一个方法句柄
 CONSTANT_MethodHandle_info {
@@ -245,7 +248,7 @@ reference_index表示对常量池的索引。
 如果kind为8，必须为<init>的CONSTANT_Methodref_info结构。
 
 
-CONSTANT_Dynamic_info与CONSTANT_InvokeDynamic_info
+### CONSTANT_Dynamic_info与CONSTANT_InvokeDynamic_info
 通过直象计算实体的代码，并不直接表示实体。
 被指向的代码称为启动方法，有jvm在解析符号引用时调用。
 每个结构指定一个启动方法以及一个辅助名称与类型定义被计算的实体。
@@ -266,11 +269,26 @@ CONSTANT_InvokeDynamic_info表示动态计算调用位置
 java.lang.invoke.CallSite产生于invokedynamic指令过程中的启动方法调用。
 辅助类型为动态计算调用点的方法类型。
 
-bootstrap_method_attr_index引用class文件bootstrap_methdos表。
+bootstrap_method_attr_index
+该值为对class文件bootstrap_methdos表中项的合法索引。
+
+### CONSTANT_Module_info
+
+```
+CONSTANT_Module_info {
+    u1 tag;
+    u2 name_index;
+}
+```
+
+### CONSTANT_Package_info
 
 
 
-字段
+
+
+
+## 字段
 字段被field_info结构描述
 field_info {
     u2             access_flags;
@@ -290,7 +308,7 @@ ACC_SYNTHETIC
 synthetic字段由编译器生成
 
 
-方法
+## 方法
 method_info描述方法，包括实例初始化方法以及类或接口初始化方法。
 相同的class文件中，不能存在相同的名称与描述符。
 
@@ -306,13 +324,18 @@ access flag
 
 
 
-属性
-属性用于ClassFile、field_info、method_info、Code_attribute结构
+## 属性
+
+
+属性用于class文件的ClassFile、field_info、method_info、Code_attribute结构。
+
+```
 attribute_info {
     u2 attribute_name_index;
     u4 attribute_length;
     u1 info[attribute_length];
 }
+```
 
 一共定义了28种属性。
 
