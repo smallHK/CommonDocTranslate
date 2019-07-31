@@ -85,10 +85,11 @@ method_info包括所有声明的方法，包括实例方法、类方法、实例
 不包括继承的方法。
 
 attributes_count表示属性数量
-attributes中的项的个数。
+attributes_count给出了attributes表中的属性数量。
 
 attributes[]
-每一项为attribute_info结构。
+
+attributes表中的每一项都必须为attribute_info结构。
 
 
 ## 名称
@@ -337,7 +338,40 @@ attribute_info {
 }
 ```
 
+对于所有的属性，attribute_name_index必须为只想常量池的无符号16位索引。位于此处的constant_pool必须为CONSTANT_Utf8_info结构。attribute_length表示接下来信息的字节长度。
+
+
 一共定义了28种属性。
+
+
+位于Class文件的位置：
+SourceFile、InnerClasses、Enclosing、SourceDebugExtension、BootstrapMethods
+Module、ModulePackages、ModuleMainClass
+NestHost、NestMembers
+
+位于field_inf的位置：
+ConstantValue
+
+位于method_info的位置：
+Code、Exceptions
+RuntimeVisibleParameterAnnotations、RuntimeInvisibleParameterAnnotations
+AnnotationDefualt
+MethodParameters
+
+位于Class文件、fields_info、method_info的位置：
+Synthetic、Deprecated、Signature
+RuntimeVisibleAnnotatios、RuntimeInvisibleAnnotations
+
+位于Code:
+LineNumberTable
+LocalVariableTabe、LocalVariableTypeTable
+StackMapTable
+
+位于Class文件、field_info、method_info、Code的位置：
+RuntimeVisibeTypeAnnotations、RuntimeInvisibleTypeAnnotations
+
+
+
 
 六种属性对于jvm解释class文件极为重要
 ConstantValue
@@ -374,7 +408,7 @@ ModulePackages
 ModuleMainClass
 
 
-Code
+### Code
 Code属性是method_info结构中attributes表的项。
 Code属性包含jvm方法的指令与辅助信息，方法包括实力初始化方法与类或接口初始化方法。
 如果方法为native或abstract，并且不是类或接口的初始化方法，则方法method_info必须不包含Code属性。否则，method_info结构必须具有一个Code属性表。
