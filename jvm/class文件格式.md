@@ -433,11 +433,14 @@ attribute_name_index
 指向CONSTANT_Utf8_info结构，结构值为"Code"
 
 
-BootstrapMethods属性
-BootstrapMethods属性是ClassFile结构中attributes表中一个长度可变属性。
-BootstrapMethods属性记录了用于产生动态计算常量与动态计算调用位置的启动方法。
+### BootstrapMethods属性
+BootstrapMethods属性是ClassFile结构中attributes表中一个长度可变属性。BootstrapMethods属性记录了用于产生动态计算常量与动态计算调用位置的启动方法。
+
 当ClassFile结构的constant_pool表中具有至少一个CONSTANT_Dynamic_info或CONSTANT_InvokeDynamic_info项时，必须存在一个BootstrapMethods属性。
+
 attributes表中最多只有一个BootstrapMethods表。
+
+```
 BootstrapMethods_attribute {
     u2 attribute_name_index;
     u4 attribute_length;
@@ -447,16 +450,29 @@ BootstrapMethods_attribute {
         u2 bootstrap_arguments[num_bootstrap_arguments];
     } bootstrap_methods[num_bootstrap_methods];
 }
-bootstrap_methods表中每一个项都包含一个对CONSTANT_MethodHandle_info结构的索引
-该方法句柄制定一个启动方法以及启动方法一系列的静态参数。
-attribute_name_index指向表示"BootstrapMethods"的CONSTANT_Utf8_info结构。
-num_bootstrap_methods表示bootstrap_methods数组的长度。
-bootstrap_method_ref必须指向一个CONSTANT_MethodHandle_info结构。
+```
+
+
+num_bootstrap_methods
+
+num_boostrap_methods的值表示bootstrap_methods数组中启动方法指示符的数量。
+
+bootstrap_methods[]
+bootstrap_methods表中包含的每一项都包含以恶只想CONSTANT_MethodHandle_info结构的索引，该常量指定了启动方法，以及一系列对启动方法的静态参数值的索引。
+
+bootstrap_methods中的每一项都包含boostrap_method_ref、num_bootstrap_arguments、num_bootstrap_arguments。
+
+bootstrap_method_ref想必须为只想constant_pool表中的合法索引。常量池中位于该处的常量必须为CONSTANT_MethodHandle_info结构。
+
+方法句柄在动态计算常量或调用点的解析过程中被解析，然后通过java.lang.invoke.MethodHandle的invokeWithArguments被调用。方法句柄必须接受参数数组。
+
 num_bootstrap_arguments给定bootstrap_arguments数组的长度。
+
 bootstrap_arguments的元素必须为对constant_pool中可载入元素的索引。
 
 
-Deprecated
+
+### Deprecated
 - attribute_name_index u2
 - attribute_length u4
 
