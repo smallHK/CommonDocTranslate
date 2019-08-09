@@ -85,10 +85,11 @@ method_info包括所有声明的方法，包括实例方法、类方法、实例
 不包括继承的方法。
 
 attributes_count表示属性数量
-attributes中的项的个数。
+attributes_count给出了attributes表中的属性数量。
 
 attributes[]
-每一项为attribute_info结构。
+
+attributes表中的每一项都必须为attribute_info结构。
 
 
 ## 名称
@@ -147,7 +148,7 @@ constant_pool表中的每个条目必须以1byte标记指示该条目的常量�
 info数组内容随着tag的值变化。
 
 
-一些常量池中的项是可载入的，这些常量可以在运行时被押入栈，进行进一步计算。在版本为v的class文件中，如果在v或更早的class文件版本中出现的tag可载入，那么该项可载入。
+一些常量池中的项是可载入的，这些常量可以在运行时被押入栈，进行进一步计算。
 
 
 ### CONSTANT_Class_info结构
@@ -169,35 +170,12 @@ name_index的值必须为constant_pool表中的合法索引值。该索引的条
 
 
 
-
-### CONSTANT_NameAndType
-
-用于表示字段或方法
-CONSTANT_NameAndType_info {
-    u1 tag;
-    u2 name_index;
-    u2 descriptor_index;
-}
-
-
-CONSTANT_Utf8_info {
-    u1 tag;
-    u2 length;
-    u1 bytes[length];
-}
-
-
-()I，表方法示无参返回int类型值的描述
-()Ljava/lang/Object，表示方法返回Object类型值的描述
-copmareTo，表示方法的名称
-
-
-CONSTANT_Integer
+### CONSTANT_Integer
 - tag 3
 - byte u4
 
 
-CONSTANT_String_info
+### CONSTANT_String_info
 CONSTANT_String_info {
     u1 tag;
     u2 string_index;
@@ -229,8 +207,34 @@ CONSTANT_InterfaceMethodref_info {
 }
 
 
+### CONSTANT_NameAndType
 
-## CONSTANT_MethodHandle_info
+用于表示字段或方法
+CONSTANT_NameAndType_info {
+    u1 tag;
+    u2 name_index;
+    u2 descriptor_index;
+}
+
+
+### CONSTANT_Utf8_info
+
+用于表示字符串常量值。
+CONSTANT_Utf8_info {
+    u1 tag;
+    u2 length;
+    u1 bytes[length];
+}
+
+字符串内容使用已修改的UTF-8进行编码。
+
+
+()I，表方法示无参返回int类型值的描述
+()Ljava/lang/Object，表示方法返回Object类型值的描述
+copmareTo，表示方法的名称
+
+
+### CONSTANT_MethodHandle_info
 
 表示一个方法句柄
 CONSTANT_MethodHandle_info {
@@ -245,7 +249,7 @@ reference_index表示对常量池的索引。
 如果kind为8，必须为<init>的CONSTANT_Methodref_info结构。
 
 
-CONSTANT_Dynamic_info与CONSTANT_InvokeDynamic_info
+### CONSTANT_Dynamic_info与CONSTANT_InvokeDynamic_info
 通过直象计算实体的代码，并不直接表示实体。
 被指向的代码称为启动方法，有jvm在解析符号引用时调用。
 每个结构指定一个启动方法以及一个辅助名称与类型定义被计算的实体。
@@ -266,11 +270,26 @@ CONSTANT_InvokeDynamic_info表示动态计算调用位置
 java.lang.invoke.CallSite产生于invokedynamic指令过程中的启动方法调用。
 辅助类型为动态计算调用点的方法类型。
 
-bootstrap_method_attr_index引用class文件bootstrap_methdos表。
+bootstrap_method_attr_index
+该值为对class文件bootstrap_methdos表中项的合法索引。
+
+### CONSTANT_Module_info
+
+```
+CONSTANT_Module_info {
+    u1 tag;
+    u2 name_index;
+}
+```
+
+### CONSTANT_Package_info
 
 
 
-字段
+
+
+
+## 字段
 字段被field_info结构描述
 field_info {
     u2             access_flags;
@@ -290,7 +309,7 @@ ACC_SYNTHETIC
 synthetic字段由编译器生成
 
 
-方法
+## 方法
 method_info描述方法，包括实例初始化方法以及类或接口初始化方法。
 相同的class文件中，不能存在相同的名称与描述符。
 
@@ -306,15 +325,53 @@ access flag
 
 
 
-属性
-属性用于ClassFile、field_info、method_info、Code_attribute结构
+## 属性
+
+
+属性用于class文件的ClassFile、field_info、method_info、Code_attribute结构。
+
+```
 attribute_info {
     u2 attribute_name_index;
     u4 attribute_length;
     u1 info[attribute_length];
 }
+```
+
+对于所有的属性，attribute_name_index必须为只想常量池的无符号16位索引。位于此处的constant_pool必须为CONSTANT_Utf8_info结构。attribute_length表示接下来信息的字节长度。
+
 
 一共定义了28种属性。
+
+
+位于Class文件的位置：
+SourceFile、InnerClasses、Enclosing、SourceDebugExtension、BootstrapMethods
+Module、ModulePackages、ModuleMainClass
+NestHost、NestMembers
+
+位于field_inf的位置：
+ConstantValue
+
+位于method_info的位置：
+Code、Exceptions
+RuntimeVisibleParameterAnnotations、RuntimeInvisibleParameterAnnotations
+AnnotationDefualt
+MethodParameters
+
+位于Class文件、fields_info、method_info的位置：
+Synthetic、Deprecated、Signature
+RuntimeVisibleAnnotatios、RuntimeInvisibleAnnotations
+
+位于Code:
+LineNumberTable
+LocalVariableTabe、LocalVariableTypeTable
+StackMapTable
+
+位于Class文件、field_info、method_info、Code的位置：
+RuntimeVisibeTypeAnnotations、RuntimeInvisibleTypeAnnotations
+
+
+
 
 六种属性对于jvm解释class文件极为重要
 ConstantValue
@@ -351,7 +408,7 @@ ModulePackages
 ModuleMainClass
 
 
-Code
+### Code
 Code属性是method_info结构中attributes表的项。
 Code属性包含jvm方法的指令与辅助信息，方法包括实力初始化方法与类或接口初始化方法。
 如果方法为native或abstract，并且不是类或接口的初始化方法，则方法method_info必须不包含Code属性。否则，method_info结构必须具有一个Code属性表。
@@ -376,11 +433,14 @@ attribute_name_index
 指向CONSTANT_Utf8_info结构，结构值为"Code"
 
 
-BootstrapMethods属性
-BootstrapMethods属性是ClassFile结构中attributes表中一个长度可变属性。
-BootstrapMethods属性记录了用于产生动态计算常量与动态计算调用位置的启动方法。
+### BootstrapMethods属性
+BootstrapMethods属性是ClassFile结构中attributes表中一个长度可变属性。BootstrapMethods属性记录了用于产生动态计算常量与动态计算调用位置的启动方法。
+
 当ClassFile结构的constant_pool表中具有至少一个CONSTANT_Dynamic_info或CONSTANT_InvokeDynamic_info项时，必须存在一个BootstrapMethods属性。
+
 attributes表中最多只有一个BootstrapMethods表。
+
+```
 BootstrapMethods_attribute {
     u2 attribute_name_index;
     u4 attribute_length;
@@ -390,16 +450,29 @@ BootstrapMethods_attribute {
         u2 bootstrap_arguments[num_bootstrap_arguments];
     } bootstrap_methods[num_bootstrap_methods];
 }
-bootstrap_methods表中每一个项都包含一个对CONSTANT_MethodHandle_info结构的索引
-该方法句柄制定一个启动方法以及启动方法一系列的静态参数。
-attribute_name_index指向表示"BootstrapMethods"的CONSTANT_Utf8_info结构。
-num_bootstrap_methods表示bootstrap_methods数组的长度。
-bootstrap_method_ref必须指向一个CONSTANT_MethodHandle_info结构。
+```
+
+
+num_bootstrap_methods
+
+num_boostrap_methods的值表示bootstrap_methods数组中启动方法指示符的数量。
+
+bootstrap_methods[]
+bootstrap_methods表中包含的每一项都包含以恶只想CONSTANT_MethodHandle_info结构的索引，该常量指定了启动方法，以及一系列对启动方法的静态参数值的索引。
+
+bootstrap_methods中的每一项都包含boostrap_method_ref、num_bootstrap_arguments、num_bootstrap_arguments。
+
+bootstrap_method_ref想必须为只想constant_pool表中的合法索引。常量池中位于该处的常量必须为CONSTANT_MethodHandle_info结构。
+
+方法句柄在动态计算常量或调用点的解析过程中被解析，然后通过java.lang.invoke.MethodHandle的invokeWithArguments被调用。方法句柄必须接受参数数组。
+
 num_bootstrap_arguments给定bootstrap_arguments数组的长度。
+
 bootstrap_arguments的元素必须为对constant_pool中可载入元素的索引。
 
 
-Deprecated
+
+### Deprecated
 - attribute_name_index u2
 - attribute_length u4
 
